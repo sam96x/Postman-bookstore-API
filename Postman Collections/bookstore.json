@@ -1,0 +1,571 @@
+{
+	"info": {
+		"_postman_id": "3dbe5f01-ebde-4716-bfc9-68030076eb54",
+		"name": "Bookstore API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create user",
+			"item": [
+				{
+					"name": "Create user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2362c6ae-b56b-421b-929f-4276fccd0b3c",
+								"exec": [
+									"const schema = {",
+									"  \"$schema\": \"http://json-schema.org/draft-07/schema\",",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"      \"userId\": { \"type\": \"string\" },",
+									"      \"username\": { \"type\": \"string\" },",
+									"      \"books\": { \"type\": \"array\" },",
+									"  },",
+									"};",
+									"",
+									"const response = pm.response.json();",
+									"",
+									"pm.test(\"Status to be 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"    console.info(\"Status is 200\");",
+									"})",
+									"",
+									"pm.test(\"JSON response schema validation\", () => {",
+									"    pm.response.to.have.jsonSchema(schema);",
+									"    console.info(\"Create user: Validation of JSON response schema was successful.\");",
+									"})",
+									"",
+									"pm.collectionVariables.set(\"userId\", response.userID);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "76cd4d58-f2ac-4951-bd16-3a35bf3754c0",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userName\": \"{{username}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{account}}/user"
+					},
+					"response": []
+				},
+				{
+					"name": "Generate token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7ae276e9-6539-4bc1-9315-707464b14029",
+								"exec": [
+									"const schema = {\r",
+									"  \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"        \"token\": { \"type\": \"string\" },\r",
+									"        \"expires\": { \"type\": \"string\" },\r",
+									"        \"status\": { \"type\": \"string\" },\r",
+									"        \"result\": { \"type\": \"string\" },\r",
+									"  },\r",
+									"};\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"const token = response.token;\r",
+									"\r",
+									"pm.test(\"Status to be 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    console.info(`Token for ${pm.collectionVariables.get(\"username\")} was created.`);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Validation schema\", () => {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Expect values in response\", () => {\r",
+									"    pm.expect(response.status).to.eql(\"Success\");\r",
+									"    pm.expect(response.result).to.eql(\"User authorized successfully.\");\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"token\", token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "de0316a2-f161-4488-9bac-a84b6c314e92",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userName\": \"{{username}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{account}}/generatetoken"
+					},
+					"response": []
+				},
+				{
+					"name": "Authorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "208a3156-191d-42ea-9590-ca85fc4ed01a",
+								"exec": [
+									"pm.test(\"Status to be 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    console.info(\"Status is 200\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "999a2cbf-9b0f-4f85-b804-903f178aff12",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userName\": \"{{username}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{account}}/authorized"
+					},
+					"response": []
+				},
+				{
+					"name": "Get user",
+					"id": "d445f124-9b32-489b-9383-b50c7e72f01d",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{account}}/user/{{userId}}"
+					},
+					"response": []
+				}
+			],
+			"id": "35cf60bd-a21f-4779-be8b-55f2bb200a4b"
+		},
+		{
+			"name": "Retrieve books",
+			"item": [
+				{
+					"name": "Get all books",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e7f8a7a5-6694-4d54-a1ed-57e1d45cbcf1",
+								"exec": [
+									"const schema = {\r",
+									"    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"books\": {\"type\": \"array\"},\r",
+									"        \"items\": {\r",
+									"            \"isbn\": { \"type\": \"string\" },\r",
+									"            \"title\": { \"type\": \"string\" },\r",
+									"            \"subTitle\": { \"type\": \"string\" },\r",
+									"            \"author\": { \"type\": \"string\" },\r",
+									"            \"publish_date\": { \"type\": \"string\" },\r",
+									"            \"publisher\": { \"type\": \"string\" },\r",
+									"            \"pages\": { \"type\": \"integer\" },\r",
+									"            \"description\": { \"type\": \"string\" },\r",
+									"            \"website\": { \"type\": \"string\" }\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\"books\"]\r",
+									"}\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status to be 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    console.info(\"Request with getting all books work correctly\");\r",
+									"})\r",
+									"\r",
+									"pm.test(\"JSON response schema validation\", () => {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"    console.info(\"Validation of JSON response schema was successful.\");\r",
+									"})\r",
+									"\r",
+									"const isbn = response.books[0].isbn;\r",
+									"console.log(isbn);\r",
+									"pm.collectionVariables.set(\"isbn\", isbn);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "f76005d8-1de1-4798-abfc-ef38b7ec1ba3",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{bookstore}}/books"
+					},
+					"response": []
+				},
+				{
+					"name": "Get one book",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "82a6447c-55b3-4100-be05-3908998a1b02",
+								"exec": [
+									"const schema = {\r",
+									"    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"isbn\": { \"type\": \"string\" },\r",
+									"        \"title\": { \"type\": \"string\" },\r",
+									"        \"subTitle\": { \"type\": \"string\" },\r",
+									"        \"author\": { \"type\": \"string\" },\r",
+									"        \"publish_date\": { \"type\": \"string\" },\r",
+									"        \"publisher\": { \"type\": \"string\" },\r",
+									"        \"pages\": { \"type\": \"integer\" },\r",
+									"        \"description\": { \"type\": \"string\" },\r",
+									"        \"website\": { \"type\": \"string\" }\r",
+									"    },\r",
+									"}\r",
+									"\r",
+									"const isbn = pm.variables.get(\"isbn\");\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status to be 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    console.info(`Request with getting one book with isbn ${isbn} work correctly`);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"JSON response schema validation\", () => {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"    console.info(\"Validation of JSON response schema was successful.\");\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Check that ISBN variable is equal to ISBN in response\", () => {\r",
+									"    pm.expect(response.isbn).to.eql(isbn);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "e7ad6c57-b545-4722-a504-40afd2a61be7",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{bookstore}}/book?ISBN={{isbn}}",
+							"host": [
+								"{{bookstore}}"
+							],
+							"path": [
+								"book"
+							],
+							"query": [
+								{
+									"key": "ISBN",
+									"value": "{{isbn}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"id": "25f8bed2-19c8-4c82-94a9-45397a943e7e"
+		},
+		{
+			"name": "Create book",
+			"item": [
+				{
+					"name": "Create book",
+					"id": "5caf4477-9bd1-4827-812d-5e1d4d5621e0",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": \"{{userId}}\",\r\n  \"collectionOfIsbns\": [\r\n    {\r\n      \"isbn\": \"9781449337711\"\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{bookstore}}/books"
+					},
+					"response": []
+				},
+				{
+					"name": "Get created book",
+					"id": "712c4018-b803-45d0-aefa-b827807a9e4b",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{bookstore}}/book"
+					},
+					"response": []
+				}
+			],
+			"id": "cc7d6c4b-8a30-41ce-8612-9eb6b918c46f"
+		},
+		{
+			"name": "Update book",
+			"item": [
+				{
+					"name": "Update book",
+					"id": "3149d563-f48b-479a-8f50-30be6d1e65c2",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"{{userId}}\",\r\n    \"isbn\": \"{{isbn2}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{bookstore}}/books/  "
+					},
+					"response": []
+				},
+				{
+					"name": "Get updated book",
+					"id": "b6868ee2-ed34-428f-93c0-bd0cd2ec3c25",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{url}}"
+					},
+					"response": []
+				}
+			],
+			"id": "41953925-75b9-47dd-995b-7f6d58cf01ca"
+		},
+		{
+			"name": "Delete book",
+			"item": [
+				{
+					"name": "Delete book",
+					"id": "7a7c16f2-7f01-4c39-9aa0-5fbe783ab2d9",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{bookstore}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Get deleted book",
+					"id": "8da52212-68b8-41cf-a56c-d4bac8aa8e92",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{bookstore}}"
+					},
+					"response": []
+				}
+			],
+			"id": "5690a631-2063-4b52-be3e-345f1bf2567b"
+		},
+		{
+			"name": "Delete user",
+			"item": [
+				{
+					"name": "Delete user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8fd28daf-8de6-4855-aa71-e4eeb196f5e3",
+								"exec": [
+									"pm.test(\"Status is 204\", () => {\r",
+									"    pm.response.to.have.status(204);\r",
+									"    console.info(\"Status is 204\");\r",
+									"    console.info(`User ${pm.collectionVariables.get(\"username\")} was deleted`);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "ce84b104-93a0-49f1-91af-8eac54149b98",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{account}}/User/{{userId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Get deleted user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6977d319-ccb1-4683-b5e8-b1f93b1d6255",
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status to be 401\", () => {\r",
+									"    pm.response.to.have.status(401);\r",
+									"    console.info(\"Status is 401\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"User not found\", () => {\r",
+									"    pm.expect(response.message).to.eql(\"User not found!\");\r",
+									"    console.info(`User with id of ${pm.collectionVariables.get(\"userId\")} was not found!`)\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "fa602513-9132-453d-bf3b-bf01dc3f4d6d",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{account}}/User/{{userId}}"
+					},
+					"response": []
+				}
+			],
+			"id": "d6d7ae9a-6f39-4fa9-ab52-a6eab3fef94f"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": {
+			"token": "{{token}}"
+		}
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "e4b570a9-0926-4a0c-9f08-0a3adf513b3e",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "9ef3fa1a-748c-4d94-8efd-3b174e5ac85b",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "account",
+			"value": "https://demoqa.com/account/v1",
+			"type": "string"
+		},
+		{
+			"key": "bookstore",
+			"value": "https://demoqa.com/bookstore/v1",
+			"type": "string"
+		},
+		{
+			"key": "isbn",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "username",
+			"value": "sam96x",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "Borussia09!",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "isbn2",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
