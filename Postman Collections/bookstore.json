@@ -218,12 +218,11 @@
 									"\r",
 									"pm.test(\"JSON response schema validation\", () => {\r",
 									"    pm.response.to.have.jsonSchema(schema);\r",
-									"    console.info(\"Validation of JSON response schema was successful.\");\r",
+									"    console.info(\"Get all books: Validation of JSON response schema was successful.\");\r",
 									"})\r",
 									"\r",
-									"const isbn = response.books[0].isbn;\r",
-									"console.log(isbn);\r",
-									"pm.collectionVariables.set(\"isbn\", isbn);"
+									"pm.collectionVariables.set(\"isbn\", response.books[0].isbn);\r",
+									"pm.collectionVariables.set(\"isbn2\", response.books[1].isbn);"
 								],
 								"type": "text/javascript"
 							}
@@ -279,7 +278,7 @@
 									"\r",
 									"pm.test(\"Check that ISBN variable is equal to ISBN in response\", () => {\r",
 									"    pm.expect(response.isbn).to.eql(isbn);\r",
-									"})"
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -318,6 +317,33 @@
 			"item": [
 				{
 					"name": "Create book",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "abde426a-d1b1-4c21-a034-45b58df5ee1c",
+								"exec": [
+									"const schema = {\r",
+									"  \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"      \"userId\": { \"type\": \"string\" },\r",
+									"      \"username\": { \"type\": \"string\" },\r",
+									"      \"books\": { \"type\": \"array\" },\r",
+									"  },\r",
+									"};\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status to be 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    console.info(\"Status is 200\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"id": "5caf4477-9bd1-4827-812d-5e1d4d5621e0",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -327,7 +353,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"userId\": \"{{userId}}\",\r\n  \"collectionOfIsbns\": [\r\n    {\r\n      \"isbn\": \"9781449337711\"\r\n    }\r\n  ]\r\n}",
+							"raw": "{\r\n  \"userId\": \"{{userId}}\",\r\n  \"collectionOfIsbns\": [\r\n    {\r\n      \"isbn\": \"{{isbn}}\"\r\n    }\r\n  ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -375,7 +401,7 @@
 								}
 							}
 						},
-						"url": "{{bookstore}}/books/  "
+						"url": "{{bookstore}}/books/{{isbn}}"
 					},
 					"response": []
 				},
