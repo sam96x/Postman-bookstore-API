@@ -31,12 +31,12 @@
 									"pm.test(\"Status to be 200\", () => {",
 									"    pm.response.to.have.status(200);",
 									"    console.info(\"Status is 200\");",
-									"})",
+									"});",
 									"",
 									"pm.test(\"JSON response schema validation\", () => {",
 									"    pm.response.to.have.jsonSchema(schema);",
 									"    console.info(\"Create user: Validation of JSON response schema was successful.\");",
-									"})",
+									"});",
 									"",
 									"pm.collectionVariables.set(\"userId\", response.userID);"
 								],
@@ -335,9 +335,9 @@
 									"\r",
 									"const response = pm.response.json();\r",
 									"\r",
-									"pm.test(\"Status to be 200\", () => {\r",
-									"    pm.response.to.have.status(200);\r",
-									"    console.info(\"Status is 200\");\r",
+									"pm.test(\"Status to be 201\", () => {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    console.info(`Book ${pm.collectionVariables.get(\"isbn\")} was added to collection!`);\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -534,7 +534,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "e4b570a9-0926-4a0c-9f08-0a3adf513b3e",
+				"id": "32b559d3-fb14-4c9e-8cf8-3c17c0a4821e",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -544,7 +544,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "9ef3fa1a-748c-4d94-8efd-3b174e5ac85b",
+				"id": "3a45f314-9ce2-4354-9879-f72f546ec757",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -564,12 +564,7 @@
 			"type": "string"
 		},
 		{
-			"key": "isbn",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "token",
+			"key": "userId",
 			"value": "",
 			"type": "string"
 		},
@@ -584,7 +579,12 @@
 			"type": "string"
 		},
 		{
-			"key": "userId",
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "isbn",
 			"value": "",
 			"type": "string"
 		},
