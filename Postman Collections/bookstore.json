@@ -84,7 +84,6 @@
 									"};\r",
 									"\r",
 									"const response = pm.response.json();\r",
-									"const token = response.token;\r",
 									"\r",
 									"pm.test(\"Status to be 200\", () => {\r",
 									"    pm.response.to.have.status(200);\r",
@@ -100,7 +99,7 @@
 									"    pm.expect(response.result).to.eql(\"User authorized successfully.\");\r",
 									"});\r",
 									"\r",
-									"pm.collectionVariables.set(\"token\", token);"
+									"pm.collectionVariables.set(\"token\", response.token);"
 								],
 								"type": "text/javascript"
 							}
@@ -551,7 +550,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "562bca29-fd05-46e8-ae6d-c44792a6444e",
+				"id": "521bfd91-330b-4c80-8f1d-bb29484ffac0",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -561,7 +560,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "49685f6c-2b31-41bb-8ae0-76c047e5afb7",
+				"id": "08f613e3-4842-4ed4-940d-3a35fc6c1f06",
 				"type": "text/javascript",
 				"exec": [
 					""
