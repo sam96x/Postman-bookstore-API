@@ -551,7 +551,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "32b559d3-fb14-4c9e-8cf8-3c17c0a4821e",
+				"id": "562bca29-fd05-46e8-ae6d-c44792a6444e",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -561,7 +561,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "3a45f314-9ce2-4354-9879-f72f546ec757",
+				"id": "49685f6c-2b31-41bb-8ae0-76c047e5afb7",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -596,17 +596,17 @@
 			"type": "string"
 		},
 		{
-			"key": "token",
-			"value": "",
-			"type": "string"
-		},
-		{
 			"key": "isbn",
 			"value": "",
 			"type": "string"
 		},
 		{
 			"key": "isbn2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "token",
 			"value": "",
 			"type": "string"
 		}
