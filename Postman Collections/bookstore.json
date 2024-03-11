@@ -712,7 +712,7 @@
 									"})",
 									"",
 									"pm.test(\"Validation schema\", () => {",
-									"    pm.response.to.have.jsonSchema();",
+									"    pm.response.to.have.jsonSchema(schema);",
 									"    console.log(\"Validation of JSON response schema was successful.\");",
 									"});",
 									"",
