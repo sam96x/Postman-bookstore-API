@@ -697,11 +697,8 @@
 									"}",
 									"",
 									"console.info('ADD MULTIPLE BOOKS')",
-									"",
 									"const response = pm.response.json();",
-									"",
 									"const isbn2 = pm.collectionVariables.get('isbn2');",
-									"",
 									"const isbn3 = pm.collectionVariables.get('isbn3');",
 									"",
 									"pm.test('Status to be 201', () => {",
@@ -1556,7 +1553,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "9a6d1c4f-ac3d-4352-bd02-ced25093313d",
+				"id": "dfa78664-a874-4e87-b173-f694e3ea444f",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1566,7 +1563,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "b6aa49d8-d739-4761-bd1b-1aca0e7f91e7",
+				"id": "2ab6868f-fd58-4db1-92b9-c1174126e5f4",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1576,57 +1573,46 @@
 	],
 	"variable": [
 		{
-			"id": "185b653a-9408-4b83-bd64-87b138f4f44d",
 			"key": "account",
 			"value": "https://demoqa.com/account/v1"
 		},
 		{
-			"id": "d0aaa5a4-abd6-4d4e-81d3-311b706cdd9b",
 			"key": "bookstore",
 			"value": "https://demoqa.com/bookstore/v1"
 		},
 		{
-			"id": "51fbc947-388c-407e-8932-4a43aa8b2cdb",
 			"key": "userId",
 			"value": ""
 		},
 		{
-			"id": "e5133348-bd82-480e-abbd-2c06959191e8",
 			"key": "username",
 			"value": ""
 		},
 		{
-			"id": "983f05ff-ab34-4b5f-8e52-f72a99696b1d",
 			"key": "password",
 			"value": ""
 		},
 		{
-			"id": "393d4e42-975c-4bf6-8adc-3481d0287ee5",
 			"key": "token",
 			"value": ""
 		},
 		{
-			"id": "9c641e1e-1b49-4ae0-850e-4b64e1cacfb9",
 			"key": "isbn1",
 			"value": ""
 		},
 		{
-			"id": "22e50883-d747-47ca-8a3d-684439085f7e",
 			"key": "isbn2",
 			"value": ""
 		},
 		{
-			"id": "3fefc86c-43da-4824-91d1-ca00aecf731c",
 			"key": "isbn3",
 			"value": ""
 		},
 		{
-			"id": "12ff42fa-619b-469a-b18d-657f4595686a",
 			"key": "isbn4",
 			"value": ""
 		},
 		{
-			"id": "2d68c6b9-1b3d-4da1-bb4c-c8a2977227e1",
 			"key": "isbn5",
 			"value": ""
 		}
