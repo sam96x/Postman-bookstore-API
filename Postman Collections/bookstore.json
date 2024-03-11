@@ -2,6 +2,7 @@
 	"info": {
 		"_postman_id": "3dbe5f01-ebde-4716-bfc9-68030076eb54",
 		"name": "Bookstore API",
+		"description": "This is collection of bookstore API for job interview in Zentity. It is completely automated, you only need to run a whole collection. Variables in collection are also assigned automatically.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
@@ -28,17 +29,34 @@
 									"",
 									"const response = pm.response.json();",
 									"",
-									"pm.test(\"Status to be 200\", () => {",
-									"    pm.response.to.have.status(200);",
-									"    console.info(\"Status is 200\");",
+									"console.info(\"CREATE USER\");",
+									"",
+									"pm.test(\"Status to be 201\", () => {",
+									"    pm.response.to.have.status(201);",
+									"    console.log(\"Status is 201\");",
 									"});",
 									"",
 									"pm.test(\"JSON response schema validation\", () => {",
 									"    pm.response.to.have.jsonSchema(schema);",
-									"    console.info(\"Create user: Validation of JSON response schema was successful.\");",
+									"    console.log(\"Validation of JSON response schema was successful.\");",
 									"});",
 									"",
+									"// assign userId to collection variable",
 									"pm.collectionVariables.set(\"userId\", response.userID);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "45d75e1d-cefb-458c-8c6f-d5cedd15ef54",
+								"exec": [
+									"const userName = pm.variables.replaceIn(\"{{$randomFirstName}}\");\r",
+									"const password = pm.variables.replaceIn(\"{{$randomPassword}}\") + \"!\";\r",
+									"\r",
+									"pm.collectionVariables.set(\"username\", userName);\r",
+									"pm.collectionVariables.set(\"password\", password);"
 								],
 								"type": "text/javascript"
 							}
@@ -60,7 +78,8 @@
 								}
 							}
 						},
-						"url": "{{account}}/user"
+						"url": "{{account}}/user",
+						"description": "This request creates a random user with faker library."
 					},
 					"response": []
 				},
@@ -85,13 +104,16 @@
 									"\r",
 									"const response = pm.response.json();\r",
 									"\r",
+									"console.info(\"GENERATE TOKEN\");\r",
+									"\r",
 									"pm.test(\"Status to be 200\", () => {\r",
 									"    pm.response.to.have.status(200);\r",
-									"    console.info(`Token for ${pm.collectionVariables.get(\"username\")} was created.`);\r",
+									"    console.log(`Token for ${pm.collectionVariables.get(\"username\")} was created.`);\r",
 									"});\r",
 									"\r",
 									"pm.test(\"Validation schema\", () => {\r",
 									"    pm.response.to.have.jsonSchema(schema);\r",
+									"    console.log(\"Validation of JSON response schema was successful.\");\r",
 									"});\r",
 									"\r",
 									"pm.test(\"Expect values in response\", () => {\r",
@@ -99,6 +121,7 @@
 									"    pm.expect(response.result).to.eql(\"User authorized successfully.\");\r",
 									"});\r",
 									"\r",
+									"// assign token to collection variable\r",
 									"pm.collectionVariables.set(\"token\", response.token);"
 								],
 								"type": "text/javascript"
@@ -133,9 +156,11 @@
 							"script": {
 								"id": "208a3156-191d-42ea-9590-ca85fc4ed01a",
 								"exec": [
+									"console.info(\"AUTHORIZED\")\r",
+									"\r",
 									"pm.test(\"Status to be 200\", () => {\r",
 									"    pm.response.to.have.status(200);\r",
-									"    console.info(\"Status is 200\");\r",
+									"    console.log(\"Status is 200\");\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -164,6 +189,69 @@
 				},
 				{
 					"name": "Get user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0f0cd7f7-cae6-4f16-bd71-3402a1445c37",
+								"exec": [
+									"const schema = {\r",
+									"    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"userId\": { \"type\": \"string\" },\r",
+									"        \"username\": { \"type\": \"string\" },\r",
+									"        \"books\": {\r",
+									"            \"type\": \"array\",\r",
+									"            \"items\": {\r",
+									"                \"type\": \"object\",\r",
+									"                \"properties\": {\r",
+									"                    \"isbn\": { \"type\": \"string\" },\r",
+									"                    \"title\": { \"type\": \"string\" },\r",
+									"                    \"subTitle\": { \"type\": \"string\" },\r",
+									"                    \"author\": { \"type\": \"string\" },\r",
+									"                    \"publish_date\": { \"type\": \"string\" },\r",
+									"                    \"publisher\": { \"type\": \"string\" },\r",
+									"                    \"pages\": { \"type\": \"number\" },\r",
+									"                    \"description\": { \"type\": \"string\" },\r",
+									"                    \"website\": { \"type\": \"string\" }\r",
+									"                },\r",
+									"                \"required\": [\"isbn\", \"title\", \"author\", \"publish_date\", \"publisher\", \"pages\"]\r",
+									"            }\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\"userId\", \"username\", \"books\"]\r",
+									"};\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"const userId = pm.collectionVariables.get(\"userId\");\r",
+									"\r",
+									"console.info(\"GET USER\");\r",
+									"\r",
+									"pm.test(\"Status to be 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    console.log(\"Request with getting user works correctly.\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that userID in response is same as userID variable\", () => {\r",
+									"    pm.expect(response.userId).to.eql(userId);\r",
+									"    console.log(\"User id in response is equal to user id in collection variable.\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Validation schema\", () => {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"    console.log(\"Validation of JSON response schema was successful.\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that books array is empty\", () => {\r",
+									"    pm.expect(response.books.length).to.eql(0);\r",
+									"    console.log(\"Books array in user's collection is empty.\")\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"id": "d445f124-9b32-489b-9383-b50c7e72f01d",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -176,7 +264,8 @@
 					"response": []
 				}
 			],
-			"id": "35cf60bd-a21f-4779-be8b-55f2bb200a4b"
+			"id": "35cf60bd-a21f-4779-be8b-55f2bb200a4b",
+			"description": "This folder is used for creating an user"
 		},
 		{
 			"name": "Retrieve books",
@@ -190,38 +279,60 @@
 								"id": "e7f8a7a5-6694-4d54-a1ed-57e1d45cbcf1",
 								"exec": [
 									"const schema = {\r",
-									"    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+									"    \"$schema\": 'http://json-schema.org/draft-07/schema',\r",
 									"    \"type\": \"object\",\r",
 									"    \"properties\": {\r",
-									"        \"books\": {\"type\": \"array\"},\r",
-									"        \"items\": {\r",
-									"            \"isbn\": { \"type\": \"string\" },\r",
-									"            \"title\": { \"type\": \"string\" },\r",
-									"            \"subTitle\": { \"type\": \"string\" },\r",
-									"            \"author\": { \"type\": \"string\" },\r",
-									"            \"publish_date\": { \"type\": \"string\" },\r",
-									"            \"publisher\": { \"type\": \"string\" },\r",
-									"            \"pages\": { \"type\": \"integer\" },\r",
-									"            \"description\": { \"type\": \"string\" },\r",
-									"            \"website\": { \"type\": \"string\" }\r",
+									"        \"books\": {\r",
+									"            \"type\": \"array\",\r",
+									"            \"items\": {\r",
+									"                \"type\": \"object\",\r",
+									"                \"properties\": {\r",
+									"                    \"isbn\": { \"type\": \"string\" },\r",
+									"                    \"title\": { \"type\": \"string\" },\r",
+									"                    \"subTitle\": { \"type\": \"string\" },\r",
+									"                    \"author\": { \"type\": \"string\" },\r",
+									"                    \"publish_date\": { \"type\": \"string\" },\r",
+									"                    \"publisher\": { \"type\": \"string\" },\r",
+									"                    \"pages\": { \"type\": \"number\" },\r",
+									"                    \"description\": { \"type\": \"string\" },\r",
+									"                    \"website\": { \"type\": \"string\" }\r",
+									"                },\r",
+									"                \"required\": [\"isbn\", \"title\", \"author\", \"publish_date\", \"publisher\", \"pages\"]\r",
+									"            }\r",
 									"        }\r",
 									"    },\r",
 									"    \"required\": [\"books\"]\r",
-									"}\r",
+									"};\r",
+									"\r",
 									"const response = pm.response.json();\r",
 									"\r",
-									"pm.test(\"Status to be 200\", () => {\r",
+									"console.info(\"GET ALL BOOKS\");\r",
+									"\r",
+									"pm.test('Status to be 200', () => {\r",
 									"    pm.response.to.have.status(200);\r",
-									"    console.info(\"Request with getting all books work correctly\");\r",
+									"    console.log('Request with getting all books work correctly');\r",
 									"})\r",
 									"\r",
 									"pm.test(\"JSON response schema validation\", () => {\r",
+									"    schema.properties.books.items.type = \"object\";\r",
 									"    pm.response.to.have.jsonSchema(schema);\r",
-									"    console.info(\"Get all books: Validation of JSON response schema was successful.\");\r",
-									"})\r",
+									"    console.log(\"Validation of JSON response schema was successful.\");\r",
+									"});\r",
 									"\r",
-									"pm.collectionVariables.set(\"isbn\", response.books[0].isbn);\r",
-									"pm.collectionVariables.set(\"isbn2\", response.books[1].isbn);"
+									"for (let i=0; i < 5; i++) {\r",
+									"    pm.collectionVariables.set(`isbn${i+1}`, response.books[i].isbn)\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "676633a6-65fd-4357-bf0a-cd08021a3fb8",
+								"exec": [
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -262,17 +373,19 @@
 									"    },\r",
 									"}\r",
 									"\r",
-									"const isbn = pm.variables.get(\"isbn\");\r",
+									"const isbn = pm.variables.get(\"isbn1\");\r",
 									"const response = pm.response.json();\r",
+									"\r",
+									"console.info(\"GET ONE BOOK\");\r",
 									"\r",
 									"pm.test(\"Status to be 200\", () => {\r",
 									"    pm.response.to.have.status(200);\r",
-									"    console.info(`Request with getting one book with isbn ${isbn} work correctly`);\r",
+									"    console.log(`Request with getting one book with isbn ${isbn} work correctly`);\r",
 									"})\r",
 									"\r",
 									"pm.test(\"JSON response schema validation\", () => {\r",
 									"    pm.response.to.have.jsonSchema(schema);\r",
-									"    console.info(\"Validation of JSON response schema was successful.\");\r",
+									"    console.log(\"Validation of JSON response schema was successful.\");\r",
 									"})\r",
 									"\r",
 									"pm.test(\"Check that ISBN variable is equal to ISBN in response\", () => {\r",
@@ -291,7 +404,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{bookstore}}/book?ISBN={{isbn}}",
+							"raw": "{{bookstore}}/book?ISBN={{isbn1}}",
 							"host": [
 								"{{bookstore}}"
 							],
@@ -301,7 +414,58 @@
 							"query": [
 								{
 									"key": "ISBN",
-									"value": "{{isbn}}"
+									"value": "{{isbn1}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get book with invalid ISBN",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "82a6447c-55b3-4100-be05-3908998a1b02",
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"console.log(\"GET BOOK WITH INVALID ISBN\")\r",
+									"\r",
+									"pm.test(\"Status to be 400\", () => {\r",
+									"    pm.response.to.have.status(400);\r",
+									"    console.log(\"Get book with invalid ISBN: Status is 400\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"User not found\", () => {\r",
+									"    pm.expect(response.message).to.eql(\"ISBN supplied is not available in Books Collection!\");\r",
+									"    console.log(`Book with isbn 123 was not found!`)\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "3965d8ac-f9e9-4941-a1a2-200e05f59757",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{bookstore}}/book?ISBN=123",
+							"host": [
+								"{{bookstore}}"
+							],
+							"path": [
+								"book"
+							],
+							"query": [
+								{
+									"key": "ISBN",
+									"value": "123"
 								}
 							]
 						}
@@ -312,10 +476,10 @@
 			"id": "25f8bed2-19c8-4c82-94a9-45397a943e7e"
 		},
 		{
-			"name": "Create book",
+			"name": "Add to collection",
 			"item": [
 				{
-					"name": "Create book",
+					"name": "Add book",
 					"event": [
 						{
 							"listen": "test",
@@ -323,26 +487,41 @@
 								"id": "abde426a-d1b1-4c21-a034-45b58df5ee1c",
 								"exec": [
 									"const schema = {\r",
-									"  \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
-									"  \"type\": \"object\",\r",
-									"  \"properties\": {\r",
-									"      \"userId\": { \"type\": \"string\" },\r",
-									"      \"username\": { \"type\": \"string\" },\r",
-									"      \"books\": { \"type\": \"array\" },\r",
-									"  },\r",
-									"};\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"books\": {\r",
+									"            \"type\": \"array\",\r",
+									"            \"items\": {\r",
+									"                \"type\": \"object\",\r",
+									"                \"properties\": {\r",
+									"                    \"isbn\": { \"type\": \"string\" }\r",
+									"                },\r",
+									"                \"required\": [\"isbn\"]\r",
+									"            }\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\"books\"]\r",
+									"}\r",
 									"\r",
 									"const response = pm.response.json();\r",
-									"const isbn = pm.collectionVariables.get(\"isbn\");\r",
+									"const isbn = pm.collectionVariables.get(\"isbn1\");\r",
+									"\r",
+									"console.info(\"ADD BOOK\");\r",
 									"\r",
 									"pm.test(\"Status to be 201\", () => {\r",
 									"    pm.response.to.have.status(201);\r",
-									"    console.info(`Book ${isbn} was added to collection!`);\r",
+									"    console.log(\"Status is 201\");\r",
 									"});\r",
 									"\r",
-									"// pm.test(\"Check that ISBN variable is equal to ISBN in response\", () => {\r",
-									"//     pm.expect(response.books.isbn).to.eql(isbn);\r",
-									"// });"
+									"pm.test(\"Check that ISBNs in response is same as ISBN variables\", () => {\r",
+									"    pm.expect(response.books[0].isbn).to.eql(isbn);\r",
+									"    console.log(\"ISBN in response is same as ISBN variable\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Validation schema\", () => {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"    console.log(\"Validation of JSON response schema was successful.\");\r",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -357,7 +536,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"userId\": \"{{userId}}\",\r\n  \"collectionOfIsbns\": [\r\n    {\r\n      \"isbn\": \"{{isbn}}\"\r\n    }\r\n  ]\r\n}",
+							"raw": "{\r\n  \"userId\": \"{{userId}}\",\r\n  \"collectionOfIsbns\": [\r\n    {\r\n        \"isbn\": \"{{isbn1}}\"\r\n    }\r\n  ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -369,14 +548,113 @@
 					"response": []
 				},
 				{
-					"name": "Get created book",
+					"name": "Add same book again",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "abde426a-d1b1-4c21-a034-45b58df5ee1c",
+								"exec": [
+									"const response = pm.response.json();\r",
+									"const isbn = pm.collectionVariables.get(\"isbn\");\r",
+									"\r",
+									"console.info(\"ADD SAME BOOK AGAIN\")\r",
+									"\r",
+									"pm.test(\"Status to be 400\", () => {\r",
+									"    pm.response.to.have.status(400);\r",
+									"    console.log(\"Status is 400\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Book is already in user's collection.\", () => {\r",
+									"    pm.expect(response.message).to.eql(\"ISBN already present in the User's Collection!\");\r",
+									"    console.log(`Book with isbn ${isbn} is already in users's collection!`)\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "fd7a6d15-045f-4112-b6f5-a5606e35b4d5",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": \"{{userId}}\",\r\n  \"collectionOfIsbns\": [\r\n    {\r\n        \"isbn\": \"{{isbn1}}\"\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{bookstore}}/books"
+					},
+					"response": []
+				},
+				{
+					"name": "Get user with book",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"id": "a5e5a36b-f629-415b-9612-a9fc7ae35db6",
 								"exec": [
-									""
+									"const schema = {\r",
+									"    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"userId\": { \"type\": \"string\" },\r",
+									"        \"username\": { \"type\": \"string\" },\r",
+									"        \"books\": {\r",
+									"            \"type\": \"array\",\r",
+									"            \"items\": {\r",
+									"                \"type\": \"object\",\r",
+									"                \"properties\": {\r",
+									"                    \"isbn\": { \"type\": \"string\" },\r",
+									"                    \"title\": { \"type\": \"string\" },\r",
+									"                    \"subTitle\": { \"type\": \"string\" },\r",
+									"                    \"author\": { \"type\": \"string\" },\r",
+									"                    \"publish_date\": { \"type\": \"string\" },\r",
+									"                    \"publisher\": { \"type\": \"string\" },\r",
+									"                    \"pages\": { \"type\": \"number\" },\r",
+									"                    \"description\": { \"type\": \"string\" },\r",
+									"                    \"website\": { \"type\": \"string\" }\r",
+									"                },\r",
+									"                \"required\": [\"isbn\", \"title\", \"author\", \"publish_date\", \"publisher\", \"pages\"]\r",
+									"            }\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\"userId\", \"username\", \"books\"]\r",
+									"};\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"const userId = pm.collectionVariables.get(\"userId\");\r",
+									"const isbn = pm.collectionVariables.get(\"isbn1\");\r",
+									"\r",
+									"console.info(\"GET USER WITH BOOK\");\r",
+									"\r",
+									"pm.test(\"Status to be 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    console.log(\"Request with getting user works correctly.\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that userID in response is same as userID variable\", () => {\r",
+									"    pm.expect(response.userId).to.eql(userId);\r",
+									"    console.log(\"User id in response is same as user id variable!\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that books array's length is 1\", () => {\r",
+									"    pm.expect(response.books.length).to.eql(1);\r",
+									"    console.log(\"User's array length is one.\")\r",
+									"});\r",
+									"\r",
+									"pm.test(`Check that book with isbn ${isbn} is in user's collection.`, () => {\r",
+									"    pm.expect(response.books[0].isbn).to.eql(isbn);\r",
+									"    console.log(`Book with ${isbn} is in user's collection!`);\r",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -389,7 +667,152 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "{{bookstore}}/book"
+						"url": "{{account}}/user/{{userId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Add multiple books",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6bd9478a-fee9-4998-aa31-032e2decfc04",
+								"exec": [
+									"const schema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"books\": {",
+									"            \"type\": \"array\",",
+									"            \"items\": {",
+									"                \"type\": \"object\",",
+									"                \"properties\": {",
+									"                    \"isbn\": { \"type\": \"string\" }",
+									"                },",
+									"                \"required\": [\"isbn\"]",
+									"            }",
+									"        }",
+									"    },",
+									"    \"required\": [\"books\"]",
+									"}",
+									"",
+									"console.info('ADD MULTIPLE BOOKS')",
+									"",
+									"const response = pm.response.json();",
+									"",
+									"const isbn2 = pm.collectionVariables.get('isbn2');",
+									"",
+									"const isbn3 = pm.collectionVariables.get('isbn3');",
+									"",
+									"pm.test('Status to be 201', () => {",
+									"    pm.response.to.have.status(201);",
+									"    console.log('Status is 201');",
+									"})",
+									"",
+									"pm.test('Check that ISBNs in response is same as ISBN variables', () => {",
+									"    pm.expect(response.books[0].isbn).to.eql(isbn2);",
+									"    pm.expect(response.books[1].isbn).to.eql(isbn3);",
+									"})",
+									"",
+									"pm.test(\"Validation schema\", () => {",
+									"    pm.response.to.have.jsonSchema();",
+									"    console.log(\"Validation of JSON response schema was successful.\");",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "714eaadf-ec04-40fe-b847-2c5766490f84",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": \"{{userId}}\",\r\n  \"collectionOfIsbns\": [\r\n    {\r\n        \"isbn\": \"{{isbn2}}\"\r\n    },\r\n    {\r\n        \"isbn\": \"{{isbn3}}\"\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{bookstore}}/books"
+					},
+					"response": []
+				},
+				{
+					"name": "Get user with multiple books",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ca494cf1-b350-4edc-b70a-b46ad1a5583b",
+								"exec": [
+									"const schema = {\r",
+									"    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"userId\": { \"type\": \"string\" },\r",
+									"        \"username\": { \"type\": \"string\" },\r",
+									"        \"books\": {\r",
+									"            \"type\": \"array\",\r",
+									"            \"items\": {\r",
+									"                \"type\": \"object\",\r",
+									"                \"properties\": {\r",
+									"                    \"isbn\": { \"type\": \"string\" },\r",
+									"                    \"title\": { \"type\": \"string\" },\r",
+									"                    \"subTitle\": { \"type\": \"string\" },\r",
+									"                    \"author\": { \"type\": \"string\" },\r",
+									"                    \"publish_date\": { \"type\": \"string\" },\r",
+									"                    \"publisher\": { \"type\": \"string\" },\r",
+									"                    \"pages\": { \"type\": \"number\" },\r",
+									"                    \"description\": { \"type\": \"string\" },\r",
+									"                    \"website\": { \"type\": \"string\" }\r",
+									"                },\r",
+									"                \"required\": [\"isbn\", \"title\", \"author\", \"publish_date\", \"publisher\", \"pages\"]\r",
+									"            }\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\"userId\", \"username\", \"books\"]\r",
+									"};\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"const userId = pm.collectionVariables.get(\"userId\");\r",
+									"\r",
+									"console.log(\"GET USER WITH MULTIPLE BOOKS\");\r",
+									"\r",
+									"pm.test(\"Status to be 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    console.log(\"Request with getting user works correctly.\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that userID in response is same as userID variable\", () => {\r",
+									"    pm.expect(response.userId).to.eql(userId);\r",
+									"    console.log(\"User id in response is same as user id variable:\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that books array is equal to 3.\", () => {\r",
+									"    pm.expect(response.books.length).to.eql(3)\r",
+									"    console.log(\"User's array length is three.\")\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "17b6f432-dafa-4467-87a5-a4a03dee08b6",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{account}}/user/{{userId}}"
 					},
 					"response": []
 				}
@@ -397,10 +820,75 @@
 			"id": "cc7d6c4b-8a30-41ce-8612-9eb6b918c46f"
 		},
 		{
-			"name": "Update book",
+			"name": "Update collection",
 			"item": [
 				{
 					"name": "Update book",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "40587779-94a0-42aa-9de0-7e0aaa47fa48",
+								"exec": [
+									"const schema = {\r",
+									"    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"userId\": { \"type\": \"string\" },\r",
+									"        \"username\": { \"type\": \"string\" },\r",
+									"        \"books\": {\r",
+									"            \"type\": \"array\",\r",
+									"            \"items\": {\r",
+									"                \"type\": \"object\",\r",
+									"                \"properties\": {\r",
+									"                    \"isbn\": { \"type\": \"string\" },\r",
+									"                    \"title\": { \"type\": \"string\" },\r",
+									"                    \"subTitle\": { \"type\": \"string\" },\r",
+									"                    \"author\": { \"type\": \"string\" },\r",
+									"                    \"publish_date\": { \"type\": \"string\" },\r",
+									"                    \"publisher\": { \"type\": \"string\" },\r",
+									"                    \"pages\": { \"type\": \"number\" },\r",
+									"                    \"description\": { \"type\": \"string\" },\r",
+									"                    \"website\": { \"type\": \"string\" }\r",
+									"                },\r",
+									"                \"required\": [\"isbn\", \"title\", \"author\", \"publish_date\", \"publisher\", \"pages\"]\r",
+									"            }\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\"userId\", \"username\", \"books\"]\r",
+									"};\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"const isbn = pm.collectionVariables.get(\"isbn4\");\r",
+									"const userId = pm.collectionVariables.get(\"userId\");\r",
+									"pm.collectionVariables.set(\"isbn1\", isbn);\r",
+									"\r",
+									"console.info(\"UPDATE BOOK\");\r",
+									"\r",
+									"pm.test('Status to be 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Check that userID in response is same as userID variable\", () => {\r",
+									"    pm.expect(response.userId).to.eql(userId);\r",
+									"    console.log(\"User id in response is same as user id variable!\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that ISBNs in response is same as ISBN variable\", () => {\r",
+									"    pm.expect(response.books[2].isbn).to.eql(isbn);\r",
+									"    console.log(\"ISBN in response is same as ISBN variable!\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"JSON response schema validation\", () => {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"    console.log(\"Validation of JSON response schema was successful.\");\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"id": "3149d563-f48b-479a-8f50-30be6d1e65c2",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -410,19 +898,176 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"userId\": \"{{userId}}\",\r\n    \"isbn\": \"{{isbn2}}\"\r\n}",
+							"raw": "{\r\n    \"userId\": \"{{userId}}\",\r\n    \"isbn\": \"{{isbn4}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "{{bookstore}}/books/{{isbn}}"
+						"url": "{{bookstore}}/books/{{isbn1}}"
 					},
 					"response": []
 				},
 				{
-					"name": "Get updated book",
+					"name": "Update book not in collection",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "40587779-94a0-42aa-9de0-7e0aaa47fa48",
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"const isbn = pm.collectionVariables.get(\"isbn5\");\r",
+									"\r",
+									"console.info(\"UPDATE BOOK NOT IN COLLECTION\");\r",
+									"\r",
+									"pm.test('Status to be 400', () => {\r",
+									"    pm.response.to.have.status(400);\r",
+									"    console.log(\"Status is 400\");\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Book is not in user's collection.\", () => {\r",
+									"    pm.expect(response.message).to.eql(\"ISBN supplied is not available in User's Collection!\");\r",
+									"    console.log(`Book with isbn ${isbn} is not in users's collection!`)\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "e5404a8d-14dc-4d68-86c8-a977b8315ee4",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"{{userId}}\",\r\n    \"isbn\": \"{{isbn4}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{bookstore}}/books/{{isbn5}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Update book with non-existing isbn",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "40587779-94a0-42aa-9de0-7e0aaa47fa48",
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"console.info(\"UPDATE BOOK WITH NON-EXISTING ISBN\");\r",
+									"\r",
+									"pm.test('Status to be 400', () => {\r",
+									"    pm.response.to.have.status(400);\r",
+									"    console.log(\"Status is 400\");\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Book is not in user's collection.\", () => {\r",
+									"    pm.expect(response.message).to.eql(\"ISBN supplied is not available in User's Collection!\");\r",
+									"    console.info(`Book with isbn 123 is not in users's collection!`);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "0e22f6d7-3fdd-49ee-bb02-7e23b8ffdd7f",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"{{userId}}\",\r\n    \"isbn\": \"{{isbn4}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{bookstore}}/books/123"
+					},
+					"response": []
+				},
+				{
+					"name": "Get user with updated collection",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2a6c4ced-428a-4e51-822f-02cbee44500f",
+								"exec": [
+									"const schema = {\r",
+									"    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"userId\": { \"type\": \"string\" },\r",
+									"        \"username\": { \"type\": \"string\" },\r",
+									"        \"books\": {\r",
+									"            \"type\": \"array\",\r",
+									"            \"items\": {\r",
+									"                \"type\": \"object\",\r",
+									"                \"properties\": {\r",
+									"                    \"isbn\": { \"type\": \"string\" },\r",
+									"                    \"title\": { \"type\": \"string\" },\r",
+									"                    \"subTitle\": { \"type\": \"string\" },\r",
+									"                    \"author\": { \"type\": \"string\" },\r",
+									"                    \"publish_date\": { \"type\": \"string\" },\r",
+									"                    \"publisher\": { \"type\": \"string\" },\r",
+									"                    \"pages\": { \"type\": \"number\" },\r",
+									"                    \"description\": { \"type\": \"string\" },\r",
+									"                    \"website\": { \"type\": \"string\" }\r",
+									"                },\r",
+									"                \"required\": [\"isbn\", \"title\", \"author\", \"publish_date\", \"publisher\", \"pages\"]\r",
+									"            }\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\"userId\", \"username\", \"books\"]\r",
+									"};\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"const userId = pm.collectionVariables.get(\"userId\");\r",
+									"\r",
+									"console.info(\"GET USER WITH UPDATED COLLECTION\");\r",
+									"\r",
+									"pm.test(\"Status to be 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    console.log(\"Status is 200.\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that userID in response is same as userID variable\", () => {\r",
+									"    pm.expect(response.userId).to.eql(userId);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that books array's length is 3\", () => {\r",
+									"    pm.expect(response.books.length).to.eql(3);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that ISBNs in response are same as ISBN variables\", () => {\r",
+									"    for (let i = 0; i < 3; i++) {\r",
+									"        pm.expect(response.books[i].isbn).to.eql(pm.collectionVariables.get(`isbn${i+1}`));\r",
+									"    }\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"id": "b6868ee2-ed34-428f-93c0-bd0cd2ec3c25",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -430,7 +1075,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "{{url}}"
+						"url": "{{account}}/user/{{userId}}"
 					},
 					"response": []
 				}
@@ -438,10 +1083,30 @@
 			"id": "41953925-75b9-47dd-995b-7f6d58cf01ca"
 		},
 		{
-			"name": "Delete book",
+			"name": "Delete collection",
 			"item": [
 				{
 					"name": "Delete book",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ebbfe06d-126f-4257-8172-d324a87b3217",
+								"exec": [
+									"const isbn = pm.collectionVariables.get(\"isbn1\");\r",
+									"\r",
+									"console.info(\"DELETE BOOK\");\r",
+									"\r",
+									"pm.test(\"Status is 204\", () => {\r",
+									"    pm.response.to.have.status(204);\r",
+									"    console.log(\"Status is 204\");\r",
+									"    console.log(`Book ${isbn} was deleted`);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"id": "7a7c16f2-7f01-4c39-9aa0-5fbe783ab2d9",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -449,12 +1114,222 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"url": "{{bookstore}}"
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"isbn\": \"{{isbn1}}\",\r\n  \"userId\": \"{{userId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{bookstore}}/book"
 					},
 					"response": []
 				},
 				{
-					"name": "Get deleted book",
+					"name": "Delete same book again",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9e680a6a-b06c-4764-8918-f9d2f70b3308",
+								"exec": [
+									"const response = pm.response.json();\r",
+									"const isbn = pm.collectionVariables.get(\"isbn1\");\r",
+									"\r",
+									"console.info(\"DELETE SAME BOOK AGAIN\");\r",
+									"\r",
+									"pm.test(\"Status to be 400\", () => {\r",
+									"    pm.response.to.have.status(400);\r",
+									"    console.log(\"Status is 400\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"User not found\", () => {\r",
+									"    pm.expect(response.message).to.eql(\"ISBN supplied is not available in User's Collection!\");\r",
+									"    console.log(`Book ${isbn} was not found in user's collection!`);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "154fdd15-c2f6-467f-8f64-17a8d672f745",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"isbn\": \"{{isbn1}}\",\r\n  \"userId\": \"{{userId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{bookstore}}/book"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete book which is not in collection",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "61e64724-018c-4cd4-85b6-f4e51bf4a5d1",
+								"exec": [
+									"const response = pm.response.json();\r",
+									"const isbn = pm.collectionVariables.get(\"isbn5\");\r",
+									"\r",
+									"console.info(\"DELETE BOOK WHICH IS NOT IN COLLECTION\");\r",
+									"\r",
+									"pm.test(\"Status to be 400\", () => {\r",
+									"    pm.response.to.have.status(400);\r",
+									"    console.log(\"Status is 400\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"User not found\", () => {\r",
+									"    pm.expect(response.message).to.eql(\"ISBN supplied is not available in User's Collection!\");\r",
+									"    console.log(`Book ${isbn} was not found in user's collection!`)\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "6ef67fbd-4633-46ab-97c4-65ce20d89573",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"isbn\": \"{{isbn5}}\",\r\n  \"userId\": \"{{userId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{bookstore}}/book"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete book with non-existing ISBN",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6fed88fc-b192-4899-aa8c-52dd80eb002f",
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"console.info(\"DELETE BOOK WITH NON-EXISTING ISBN\");\r",
+									"\r",
+									"pm.test(\"Status to be 400\", () => {\r",
+									"    pm.response.to.have.status(400);\r",
+									"    console.log(\"Status is 400\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"User not found\", () => {\r",
+									"    pm.expect(response.message).to.eql(\"ISBN supplied is not available in User's Collection!\");\r",
+									"    console.log(`Book 123 was not found in user's collection!`);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "317222b9-8e24-437f-bab2-af0260a15773",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"isbn\": \"123\",\r\n  \"userId\": \"{{userId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{bookstore}}/book"
+					},
+					"response": []
+				},
+				{
+					"name": "Get user's books after delete one",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2ee3aa2a-2afe-458a-a6a7-8bb47a51d147",
+								"exec": [
+									"const schema = {\r",
+									"    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"userId\": { \"type\": \"string\" },\r",
+									"        \"username\": { \"type\": \"string\" },\r",
+									"        \"books\": {\r",
+									"            \"type\": \"array\",\r",
+									"            \"items\": {\r",
+									"                \"type\": \"object\",\r",
+									"                \"properties\": {\r",
+									"                    \"isbn\": { \"type\": \"string\" },\r",
+									"                    \"title\": { \"type\": \"string\" },\r",
+									"                    \"subTitle\": { \"type\": \"string\" },\r",
+									"                    \"author\": { \"type\": \"string\" },\r",
+									"                    \"publish_date\": { \"type\": \"string\" },\r",
+									"                    \"publisher\": { \"type\": \"string\" },\r",
+									"                    \"pages\": { \"type\": \"number\" },\r",
+									"                    \"description\": { \"type\": \"string\" },\r",
+									"                    \"website\": { \"type\": \"string\" }\r",
+									"                },\r",
+									"                \"required\": [\"isbn\", \"title\", \"author\", \"publish_date\", \"publisher\", \"pages\"]\r",
+									"            }\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\"userId\", \"username\", \"books\"]\r",
+									"};\r",
+									"const response = pm.response.json();\r",
+									"const userId = pm.collectionVariables.get(\"userId\");\r",
+									"\r",
+									"console.info(\"GET USER'S BOOKS AFTER DELETE ONE\")\r",
+									"\r",
+									"pm.test(\"Status to be 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    console.log(\"Status is 200.\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that userID in response is same as userID variable\", () => {\r",
+									"    pm.expect(response.userId).to.eql(userId);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that books array' length is 2\", () => {\r",
+									"    pm.expect(response.books.length).to.eql(2);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that ISBNs in response are same as ISBN variables\", () => {\r",
+									"    for (let i = 0; i < 2; i++) {\r",
+									"        pm.expect(response.books[i].isbn).to.eql(pm.collectionVariables.get(`isbn${i+2}`));\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"id": "8da52212-68b8-41cf-a56c-d4bac8aa8e92",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -462,7 +1337,127 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "{{bookstore}}"
+						"url": "{{account}}/user/{{userId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete multiple books",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "890e079f-e4cc-4678-98b7-a339fbb04d93",
+								"exec": [
+									"const isbn2 = pm.collectionVariables.get(\"isbn2\");\r",
+									"const isbn3 = pm.collectionVariables.get(\"isbn3\");\r",
+									"\r",
+									"console.info(\"DELETE MULTIPLE BOOKS\");\r",
+									"\r",
+									"pm.test(\"Status is 204\", () => {\r",
+									"    pm.response.to.have.status(204);\r",
+									"    console.log(\"Status is 204\");\r",
+									"    console.log(`Books ${isbn2} and ${isbn3} was deleted`);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "962486a1-720d-4a3c-96cb-bc5cb9c7462b",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{bookstore}}/books?UserId={{userId}}",
+							"host": [
+								"{{bookstore}}"
+							],
+							"path": [
+								"books"
+							],
+							"query": [
+								{
+									"key": "UserId",
+									"value": "{{userId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user's books after delete all books from collection",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "67fbfd7b-d54b-45c8-8126-b79d464cac5f",
+								"exec": [
+									"const schema = {\r",
+									"    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"userId\": { \"type\": \"string\" },\r",
+									"        \"username\": { \"type\": \"string\" },\r",
+									"        \"books\": {\r",
+									"            \"type\": \"array\",\r",
+									"            \"items\": {\r",
+									"                \"type\": \"object\",\r",
+									"                \"properties\": {\r",
+									"                    \"isbn\": { \"type\": \"string\" },\r",
+									"                    \"title\": { \"type\": \"string\" },\r",
+									"                    \"subTitle\": { \"type\": \"string\" },\r",
+									"                    \"author\": { \"type\": \"string\" },\r",
+									"                    \"publish_date\": { \"type\": \"string\" },\r",
+									"                    \"publisher\": { \"type\": \"string\" },\r",
+									"                    \"pages\": { \"type\": \"number\" },\r",
+									"                    \"description\": { \"type\": \"string\" },\r",
+									"                    \"website\": { \"type\": \"string\" }\r",
+									"                },\r",
+									"                \"required\": [\"isbn\", \"title\", \"author\", \"publish_date\", \"publisher\", \"pages\"]\r",
+									"            }\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\"userId\", \"username\", \"books\"]\r",
+									"};\r",
+									"const response = pm.response.json();\r",
+									"const userId = pm.collectionVariables.get(\"userId\");\r",
+									"\r",
+									"console.info(\"GET USER'S BOOKS AFTER DELETE ALL BOOKS FROM COLLECTION\");\r",
+									"\r",
+									"pm.test(\"Status to be 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    console.log(\"Status is 200.\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that userID in response is same as userID variable\", () => {\r",
+									"    pm.expect(response.userId).to.eql(userId);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that books array is empty\", () => {\r",
+									"    pm.expect(response.books.length).to.eql(0)\r",
+									"});\r",
+									"\r",
+									"for (let i = 1; i < 6; i++) {\r",
+									"    pm.collectionVariables.set(`isbn${i}`, \"\");\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "3c3dcff3-a465-43a8-b2df-dab4f3ba6930",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{account}}/user/{{userId}}"
 					},
 					"response": []
 				}
@@ -480,10 +1475,14 @@
 							"script": {
 								"id": "8fd28daf-8de6-4855-aa71-e4eeb196f5e3",
 								"exec": [
+									"const userName = pm.collectionVariables.get(\"username\");\r",
+									"\r",
+									"console.info(\"DELETE USER\");\r",
+									"\r",
 									"pm.test(\"Status is 204\", () => {\r",
 									"    pm.response.to.have.status(204);\r",
-									"    console.info(\"Status is 204\");\r",
-									"    console.info(`User ${pm.collectionVariables.get(\"username\")} was deleted`);\r",
+									"    console.log(\"Status is 204\");\r",
+									"    console.log(`User ${userName} was deleted`);\r",
 									"})"
 								],
 								"type": "text/javascript"
@@ -511,15 +1510,22 @@
 								"exec": [
 									"const response = pm.response.json();\r",
 									"\r",
+									"console.info(\"GET DELETED USER\");\r",
+									"\r",
 									"pm.test(\"Status to be 401\", () => {\r",
 									"    pm.response.to.have.status(401);\r",
-									"    console.info(\"Status is 401\");\r",
+									"    console.log(\"Status is 401\");\r",
 									"});\r",
 									"\r",
 									"pm.test(\"User not found\", () => {\r",
 									"    pm.expect(response.message).to.eql(\"User not found!\");\r",
-									"    console.info(`User with id of ${pm.collectionVariables.get(\"userId\")} was not found!`)\r",
-									"})"
+									"    console.log(`User with id of ${pm.collectionVariables.get(\"userId\")} was not found!`)\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"username\", \"\");\r",
+									"pm.collectionVariables.set(\"password\", \"\");\r",
+									"pm.collectionVariables.set(\"userId\", \"\");\r",
+									"pm.collectionVariables.set(\"token\", \"\");"
 								],
 								"type": "text/javascript"
 							}
@@ -570,44 +1576,59 @@
 	],
 	"variable": [
 		{
+			"id": "185b653a-9408-4b83-bd64-87b138f4f44d",
 			"key": "account",
-			"value": "https://demoqa.com/account/v1",
-			"type": "string"
+			"value": "https://demoqa.com/account/v1"
 		},
 		{
+			"id": "d0aaa5a4-abd6-4d4e-81d3-311b706cdd9b",
 			"key": "bookstore",
-			"value": "https://demoqa.com/bookstore/v1",
-			"type": "string"
+			"value": "https://demoqa.com/bookstore/v1"
 		},
 		{
+			"id": "51fbc947-388c-407e-8932-4a43aa8b2cdb",
 			"key": "userId",
-			"value": "",
-			"type": "string"
+			"value": ""
 		},
 		{
+			"id": "e5133348-bd82-480e-abbd-2c06959191e8",
 			"key": "username",
-			"value": "sam96x",
-			"type": "string"
+			"value": ""
 		},
 		{
+			"id": "983f05ff-ab34-4b5f-8e52-f72a99696b1d",
 			"key": "password",
-			"value": "Borussia09!",
-			"type": "string"
+			"value": ""
 		},
 		{
-			"key": "isbn",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "isbn2",
-			"value": "",
-			"type": "string"
-		},
-		{
+			"id": "393d4e42-975c-4bf6-8adc-3481d0287ee5",
 			"key": "token",
-			"value": "",
-			"type": "string"
+			"value": ""
+		},
+		{
+			"id": "9c641e1e-1b49-4ae0-850e-4b64e1cacfb9",
+			"key": "isbn1",
+			"value": ""
+		},
+		{
+			"id": "22e50883-d747-47ca-8a3d-684439085f7e",
+			"key": "isbn2",
+			"value": ""
+		},
+		{
+			"id": "3fefc86c-43da-4824-91d1-ca00aecf731c",
+			"key": "isbn3",
+			"value": ""
+		},
+		{
+			"id": "12ff42fa-619b-469a-b18d-657f4595686a",
+			"key": "isbn4",
+			"value": ""
+		},
+		{
+			"id": "2d68c6b9-1b3d-4da1-bb4c-c8a2977227e1",
+			"key": "isbn5",
+			"value": ""
 		}
 	]
 }
